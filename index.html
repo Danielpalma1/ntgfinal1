@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>טרבלסי גינון</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --g:     #52a870;
+  --g2:    #6abf88;
+  --glt:   #edf8f1;
+  --gmid:  #c0e4d0;
+  --gdk:   #347a50;
+  --tx:    #18211a;
+  --mid:   #4a5c50;
+  --soft:  #8a9d90;
+  --bdr:   #deeae3;
+  --bg:    #ffffff;
+  --bgs:   #f4faf6;
+  --ease:  cubic-bezier(.22,1,.36,1);
+  --ease-b:cubic-bezier(.34,1.56,.64,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--tx);direction:rtl;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── LEAF CANVAS (sides only) ── */
+#lc{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.lf{position:absolute;will-change:transform,opacity;opacity:0}
+.lf img{display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.07))}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;right:0;left:0;z-index:60;
+  height:64px;padding:0 7%;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .4s,box-shadow .4s;
+}
+.nav.on{background:rgba(255,255,255,.97);backdrop-filter:blur(16px);box-shadow:0 1px 0 var(--bdr)}
+.logo{
+  display:flex;align-items:center;gap:9px;
+  font-family:Arial,sans-serif;font-size:18px;font-weight:700;
+  color:var(--gdk);text-decoration:none;letter-spacing:-.3px;
+}
+.logo svg{flex-shrink:0}
+.nav-ul{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-ul a{
+  font-size:13.5px;color:var(--mid);text-decoration:none;font-weight:400;
+  letter-spacing:.1px;transition:color .18s;position:relative;
+}
+.nav-ul a:not(.nb)::after{
+  content:'';position:absolute;bottom:-2px;right:0;
+  width:0;height:1px;background:var(--g);
+  transition:width .28s var(--ease);
+}
+.nav-ul a:not(.nb):hover{color:var(--g)}
+.nav-ul a:not(.nb):hover::after{width:100%}
+.nb{
+  background:var(--g)!important;color:#fff!important;
+  padding:9px 22px;border-radius:8px;font-weight:600!important;letter-spacing:.2px!important;
+  transition:background .18s,transform .15s,box-shadow .18s!important;
+  box-shadow:0 2px 8px rgba(58,110,72,.2)!important;
+}
+.nb:hover{background:var(--gdk)!important;transform:translateY(-1px);box-shadow:0 6px 18px rgba(30,62,42,.25)!important}
+.nb:active{transform:translateY(0)!important}
+/* call button */
+.btn-call{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);
+  color:#fff;padding:13px 22px;border-radius:10px;
+  font-size:15px;font-weight:600;font-family:'Heebo',sans-serif;
+  text-decoration:none;letter-spacing:.1px;
+  transition:background .2s,border-color .2s,transform .15s;
+  backdrop-filter:blur(6px);
+}
+.btn-call:hover{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.7);transform:translateY(-1px)}
+.btn-call svg{flex-shrink:0}
+/* call button near forms */
+.form-call{margin-top:12px;text-align:center}
+.form-call a{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;border-radius:9px;
+  border:1.5px solid var(--gmid);background:var(--glt);
+  color:var(--gdk);font-size:14px;font-weight:600;font-family:'Heebo',sans-serif;
+  text-decoration:none;
+  transition:background .18s,border-color .18s,transform .15s;
+}
+.form-call a:hover{background:var(--gmid);border-color:var(--g);transform:translateY(-1px)}
+.mid-form-call{margin-top:14px;text-align:center}
+.mid-form-call a{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;border-radius:9px;
+  border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);
+  color:#fff;font-size:14px;font-weight:600;font-family:'Heebo',sans-serif;
+  text-decoration:none;backdrop-filter:blur(4px);
+  transition:background .18s,border-color .18s,transform .15s;
+}
+.mid-form-call a:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.6);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{position:relative;height:180vh;background:#0a1812}
+.hero-sticky{
+  position:sticky;top:0;
+  height:100vh;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#hero-canvas{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  background:#1a3d24;
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(4,20,10,.52) 0%,rgba(4,20,10,.30) 45%,rgba(4,20,10,.62) 100%);
+}
+.hero-content{
+  position:relative;z-index:2;
+  text-align:center;
+  max-width:820px;
+  padding:0 6%;
+}
+.hero-content .hero-eyebrow{
+  background:rgba(255,255,255,.13);
+  border-color:rgba(255,255,255,.25);
+  color:rgba(255,255,255,.92);
+}
+.hero .hero-content h1{color:#ffffff!important;text-shadow:0 2px 20px rgba(0,0,0,.65),0 0 50px rgba(0,0,0,.4)}
+.hero .hero-content h1 em{color:#7ee8a2!important;text-shadow:0 1px 16px rgba(0,0,0,.45)}
+.hero-content .hero-sub{color:#ffffff;opacity:.93;text-shadow:0 1px 12px rgba(0,0,0,.65);font-size:17px;font-weight:400}
+.hero-content .hero-eyebrow{background:rgba(40,180,90,.28);border-color:rgba(93,255,138,.45);color:#b8ffcc}
+.hero-content .tc{color:#ffffff;text-shadow:0 1px 8px rgba(0,0,0,.7);font-weight:500}
+.hero-content .tck{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3)}
+.hero-content .trust{justify-content:center}
+.hero-content .tc{color:rgba(255,255,255,.7)}
+.hero-content .tck{background:rgba(255,255,255,.15)}
+.hero-content .btns{justify-content:center}
+.hero-content .btn-txt{color:rgba(255,255,255,.75)}
+.hero-content .btn-txt:hover{color:#fff}
+/* Nav on dark hero */
+.nav:not(.on) .logo{color:#fff}
+.nav:not(.on) .nav-ul a:not(.nb){color:rgba(255,255,255,.82)}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--glt);border:1px solid var(--gmid);
+  color:var(--gdk);font-size:11.5px;font-weight:600;letter-spacing:.6px;
+  padding:5px 14px;border-radius:20px;margin-bottom:26px;
+}
+.edot{width:5px;height:5px;background:var(--g2);border-radius:50%;animation:edot 2.6s ease-in-out infinite}
+@keyframes edot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
+
+/* Title — Arial, tight, heavy */
+.hero h1{
+  font-family:Arial,sans-serif;
+  font-size:clamp(42px,6vw,74px);
+  line-height:1.04;
+  letter-spacing:-1.5px;
+  font-weight:700;
+  color:var(--tx);
+  margin-bottom:22px;
+}
+.hero h1 em{
+  font-style:italic;
+  color:var(--g);
+  display:block;
+  font-weight:700;
+}
+.hero-sub{
+  font-size:17px;line-height:1.82;
+  color:var(--mid);font-weight:300;
+  max-width:460px;margin-bottom:38px;
+}
+.btns{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+/* primary button */
+.btn{
+  background:var(--g);color:#fff;
+  padding:14px 30px;border-radius:10px;
+  font-size:15px;font-weight:600;font-family:'Heebo',sans-serif;
+  text-decoration:none;border:none;cursor:pointer;
+  letter-spacing:.15px;
+  transition:background .18s,transform .15s,box-shadow .18s;
+  box-shadow:0 2px 10px rgba(58,110,72,.22);
+  display:inline-block;
+}
+.btn:hover{background:var(--gdk);transform:translateY(-2px);box-shadow:0 8px 24px rgba(30,62,42,.22)}
+.btn:active{transform:translateY(0)}
+/* ghost link */
+.btn-txt{
+  font-size:14.5px;color:var(--mid);text-decoration:none;
+  font-weight:400;display:flex;align-items:center;gap:5px;
+  letter-spacing:.05px;transition:color .18s;
+}
+.btn-txt:hover{color:var(--g)}
+.btn-txt svg{transition:transform .2s var(--ease)}
+.btn-txt:hover svg{transform:translateX(-3px)}
+
+.trust{margin-top:38px;display:flex;flex-wrap:wrap;gap:16px 24px}
+.tc{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--soft);letter-spacing:.1px}
+.tck{
+  width:15px;height:15px;border-radius:50%;
+  background:var(--glt);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+
+/* Hero photo */
+.hero-photo-col{position:relative}
+.hero-photo{
+  border-radius:20px;overflow:hidden;height:520px;
+  box-shadow:0 24px 64px rgba(0,0,0,.08),0 2px 0 var(--bdr);
+  position:relative;
+}
+.hero-photo .ph{
+  width:100%;height:100%;
+  background:linear-gradient(150deg,#94c9a4 0%,#4d8a5e 45%,#1e3e2a 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-photo img{width:100%;height:100%;object-fit:cover}
+.hp-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(16,40,22,.48) 0%,transparent 52%)}
+.hp-cap{position:absolute;bottom:0;right:0;left:0;padding:26px;color:#fff;z-index:2}
+.hp-cap strong{display:block;font-size:14px;font-weight:600;margin-bottom:2px;letter-spacing:.05px}
+.hp-cap span{font-size:12px;opacity:.72;letter-spacing:.1px}
+/* floating badge */
+.hero-chip{
+  position:absolute;top:-16px;left:-20px;
+  background:#fff;border-radius:14px;
+  padding:14px 18px;
+  box-shadow:0 8px 28px rgba(0,0,0,.09),0 1px 0 var(--bdr);
+  border:1px solid var(--bdr);
+  display:flex;align-items:center;gap:10px;
+}
+.hci{width:34px;height:34px;background:var(--glt);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hct strong{display:block;font-size:12.5px;font-weight:600;color:var(--tx);letter-spacing:.05px}
+.hct span{font-size:11px;color:var(--soft)}
+
+/* ── SECTION BASE ── */
+.sec{padding:96px 7%;position:relative}
+.alt{background:var(--bgs)}
+.stag{
+  display:block;font-size:10.5px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--g);margin-bottom:12px;
+}
+h2{
+  font-family:Arial,sans-serif;
+  font-size:clamp(28px,3.8vw,44px);
+  line-height:1.1;color:var(--tx);
+  font-weight:700;letter-spacing:-1px;margin-bottom:12px;
+}
+h2 span{color:var(--g)}
+.lead{font-size:16px;color:var(--mid);font-weight:300;line-height:1.78;max-width:540px}
+
+/* ── WHO WE ARE ── */
+.who-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  align-items:center;margin-top:56px;max-width:1140px;
+}
+.who-copy p{
+  font-size:15.5px;line-height:1.85;color:var(--mid);
+  font-weight:300;margin-bottom:14px;
+}
+.who-copy p strong{font-weight:600;color:var(--tx)}
+.who-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px;
+}
+.wstat{
+  background:var(--bg);border:1px solid var(--bdr);border-radius:14px;
+  padding:20px 18px;text-align:center;
+  transition:border-color .22s,box-shadow .22s,transform .25s var(--ease);
+}
+.wstat:hover{border-color:var(--gmid);box-shadow:0 6px 20px rgba(58,110,72,.07);transform:translateY(-2px)}
+.wstat-ico{margin-bottom:10px;color:var(--g)}
+.wstat-n{
+  font-family:Arial,sans-serif;font-size:30px;font-weight:700;
+  color:var(--g);line-height:1;margin-bottom:4px;letter-spacing:-1px;
+}
+.wstat-l{font-size:12px;color:var(--soft);font-weight:400;letter-spacing:.1px}
+.who-photo{border-radius:20px;overflow:hidden;height:440px;position:relative;box-shadow:0 20px 56px rgba(0,0,0,.07)}
+.who-photo .ph{width:100%;height:100%;background:linear-gradient(145deg,#a0d0b2,#3d8a50,#1a4224);display:flex;align-items:center;justify-content:center}
+.who-photo img{width:100%;height:100%;object-fit:cover}
+
+/* ── SERVICES ── */
+.svc-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  margin-top:52px;max-width:1140px;
+}
+.svc{
+  background:var(--g);border:1px solid var(--g);border-radius:16px;
+  padding:30px 26px 26px;
+  transition:background .22s,box-shadow .25s,transform .28s var(--ease);
+  position:relative;overflow:hidden;
+}
+.svc::after{
+  content:'';position:absolute;top:0;right:0;left:0;height:2px;
+  background:rgba(255,255,255,.3);transform:scaleX(0);transform-origin:right;
+  transition:transform .3s var(--ease);
+}
+.svc:hover::after{transform:scaleX(1);transform-origin:right}
+.svc:hover{background:var(--gdk);box-shadow:0 10px 36px rgba(30,62,42,.22);transform:translateY(-3px)}
+.svc-ico{
+  width:42px;height:42px;
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.svc-ico svg{stroke:#fff}
+.svc-nm{font-family:Arial,sans-serif;font-size:16.5px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.2px}
+.svc-bd{font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.75;font-weight:300}
+.svc-nt{display:block;margin-top:14px;font-size:11.5px;color:rgba(255,255,255,.85);font-weight:600;letter-spacing:.2px}
+
+/* ── GALLERY ── */
+.gtrack{
+  display:flex;gap:14px;
+  overflow-x:auto;padding:4px 7% 22px;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;cursor:grab;margin-top:44px;
+}
+.gtrack::-webkit-scrollbar{display:none}
+.gtrack.gb{cursor:grabbing}
+.gc{flex:0 0 340px;height:264px;border-radius:16px;overflow:hidden;position:relative;scroll-snap-align:start;flex-shrink:0}
+.gc.w{flex:0 0 480px}
+.gc .ph{width:100%;height:100%;transition:transform .55s var(--ease)}
+.gc:hover .ph{transform:scale(1.04)}
+.gc img{width:100%;height:100%;object-fit:cover;transition:transform .55s var(--ease)}
+.gc:hover img{transform:scale(1.04)}
+.gc-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,36,18,.7) 0%,transparent 52%);opacity:0;transition:opacity .28s}
+.gc:hover .gc-grad{opacity:1}
+.gc-info{position:absolute;bottom:0;right:0;left:0;padding:18px;transform:translateY(7px);opacity:0;transition:.26s var(--ease)}
+.gc:hover .gc-info{opacity:1;transform:translateY(0)}
+.gc-info strong{display:block;font-size:14px;font-weight:600;color:#fff;margin-bottom:2px;letter-spacing:.05px}
+.gc-info span{font-size:12px;color:rgba(255,255,255,.68)}
+.gc-tag{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+  color:var(--gdk);font-size:11px;font-weight:600;
+  padding:4px 11px;border-radius:20px;letter-spacing:.2px;
+}
+.p1{background:linear-gradient(135deg,#6ab07c,#2e6b3a,#1a4224)}
+.p2{background:linear-gradient(135deg,#88be9b,#3d8a50)}
+.p3{background:linear-gradient(135deg,#aad5b5,#5a9e70)}
+.p4{background:linear-gradient(135deg,#3d8a50,#1a4224)}
+.p5{background:linear-gradient(135deg,#c2deca,#5a9e70)}
+.p6{background:linear-gradient(135deg,#78b58a,#224130)}
+.garr-row{display:flex;gap:8px;padding:0 7%;margin-top:14px}
+.garr{
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--bdr);background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:border-color .18s,background .18s,transform .15s;
+}
+.garr:hover{border-color:var(--gmid);background:var(--glt);transform:scale(1.05)}
+.gfooter{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 7%;margin-top:16px;flex-wrap:wrap;gap:12px;
+}
+.gfooter p{font-size:14px;color:var(--mid);font-weight:300}
+
+/* ── ADVANTAGES ── */
+#adv{text-align:center}
+.adv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:52px auto 0;max-width:1140px}
+.adv{
+  background:var(--bg);border:1px solid var(--bdr);border-radius:16px;
+  padding:28px 22px;text-align:center;
+  transition:border-color .22s,box-shadow .25s,transform .28s var(--ease);
+}
+.adv:hover{border-color:var(--gmid);box-shadow:0 8px 28px rgba(58,110,72,.09);transform:translateY(-3px)}
+.adv-ico{
+  width:50px;height:50px;border-radius:14px;
+  background:var(--glt);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+  transition:background .22s;
+}
+.adv:hover .adv-ico{background:var(--gmid)}
+.adv-ttl{font-family:Arial,sans-serif;font-size:16px;font-weight:700;color:var(--tx);margin-bottom:7px;letter-spacing:-.1px}
+.adv-txt{font-size:13.5px;color:var(--soft);line-height:1.72;font-weight:300}
+
+/* ── REVIEWS ── */
+.rtrack{
+  display:flex;gap:14px;overflow-x:auto;
+  padding:4px 7% 22px;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:44px;
+}
+.rtrack::-webkit-scrollbar{display:none}
+.rc{
+  flex:0 0 320px;background:var(--bg);
+  border:1px solid var(--bdr);border-radius:16px;
+  padding:26px 24px;scroll-snap-align:start;
+  transition:border-color .22s,box-shadow .25s,transform .28s var(--ease);
+}
+.rc:hover{border-color:var(--gmid);box-shadow:0 8px 28px rgba(58,110,72,.08);transform:translateY(-3px)}
+.rc-stars{display:flex;gap:3px;margin-bottom:14px}
+.star{color:#f5a623;font-size:13px}
+.rc-txt{font-size:14px;line-height:1.8;color:var(--mid);font-style:italic;margin-bottom:18px;font-weight:300}
+.rc-author{display:flex;align-items:center;gap:10px}
+.rav{
+  width:35px;height:35px;border-radius:50%;
+  background:var(--glt);border:1.5px solid var(--gmid);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--gdk);flex-shrink:0;
+}
+.rav-n strong{display:block;font-size:12.5px;font-weight:600;color:var(--tx);letter-spacing:.05px}
+.rav-n span{font-size:11px;color:var(--soft)}
+
+/* ── PROCESS ── */
+.proc-layout{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  align-items:start;margin-top:52px;max-width:1140px;
+}
+.proc-steps{position:relative}
+.proc-steps::before{
+  content:'';position:absolute;right:17px;top:0;bottom:40px;
+  width:1px;background:linear-gradient(to bottom,var(--gmid),transparent);
+}
+.ps{
+  display:flex;gap:18px;padding:20px 6px 20px 0;
+  border-radius:10px;cursor:default;
+  transition:background .18s;position:relative;z-index:1;
+}
+.ps:hover{background:var(--bgs)}
+.pn{
+  flex-shrink:0;width:36px;height:36px;border-radius:50%;
+  background:var(--bg);border:1.5px solid var(--gmid);
+  display:flex;align-items:center;justify-content:center;
+  font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--g);
+  position:relative;z-index:2;margin-top:1px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.ps:hover .pn{background:var(--g);border-color:var(--g);color:#fff}
+.ps-h{font-family:Arial,sans-serif;font-size:17px;font-weight:700;color:var(--tx);margin-bottom:5px;letter-spacing:-.2px}
+.ps-p{font-size:13.5px;color:var(--soft);line-height:1.72;font-weight:300}
+
+/* ── CONTACT FORM ── */
+.contact-box{
+  background:var(--glt);border:1px solid var(--gmid);border-radius:18px;
+  padding:38px 36px;
+}
+.contact-box h3{
+  font-family:Arial,sans-serif;font-size:22px;font-weight:700;
+  color:var(--tx);margin-bottom:8px;letter-spacing:-.3px;
+}
+.contact-box .lead{font-size:15px;margin-bottom:26px;max-width:100%}
+.form-row{display:flex;flex-direction:column;gap:10px}
+.finput{
+  padding:13px 16px;border-radius:9px;
+  border:1.5px solid var(--bdr);background:#fff;
+  font-size:14.5px;font-family:'Heebo',sans-serif;color:var(--tx);
+  direction:rtl;outline:none;width:100%;
+  transition:border-color .18s,box-shadow .18s;
+  letter-spacing:.05px;
+}
+.finput::placeholder{color:var(--soft)}
+.finput:focus{border-color:var(--gmid);box-shadow:0 0 0 3px rgba(58,110,72,.09)}
+.fsub{
+  background:var(--g);color:#fff;
+  padding:14px 28px;border-radius:9px;
+  font-size:15px;font-weight:600;font-family:'Heebo',sans-serif;
+  border:none;cursor:pointer;width:100%;
+  letter-spacing:.15px;
+  transition:background .18s,transform .15s,box-shadow .18s;
+  box-shadow:0 2px 10px rgba(58,110,72,.2);
+  margin-top:4px;
+}
+.fsub:hover{background:var(--gdk);transform:translateY(-1px);box-shadow:0 6px 18px rgba(30,62,42,.22)}
+.fsub:active{transform:translateY(0)}
+.fnote{font-size:12px;color:var(--soft);text-align:center;margin-top:10px;letter-spacing:.1px}
+
+/* ── FOOTER ── */
+footer{background:#0f1811;padding:52px 7% 32px;color:rgba(255,255,255,.38)}
+.ft-row{display:flex;justify-content:space-between;gap:40px;margin-bottom:42px;flex-wrap:wrap}
+.ft-logo{font-family:Arial,sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.2px}
+.ft-tag{font-size:13px;font-weight:300;line-height:1.65;max-width:210px}
+.fc-h{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.24);margin-bottom:13px}
+.fc-ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.fc-ul a{font-size:13.5px;color:rgba(255,255,255,.42);text-decoration:none;font-weight:300;transition:color .18s}
+.fc-ul a:hover{color:#fff}
+.ft-div{height:1px;background:rgba(255,255,255,.07);margin-bottom:22px}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;flex-wrap:wrap;gap:10px}
+.ft-contact{display:flex;gap:20px}
+.ft-contact a{color:rgba(255,255,255,.38);text-decoration:none;transition:color .18s}
+.ft-contact a:hover{color:#fff}
+
+/* ── REVEAL ── */
+.r{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.r.in{opacity:1;transform:translateY(0)}
+.r.d1{transition-delay:.07s}.r.d2{transition-delay:.14s}.r.d3{transition-delay:.21s}.r.d4{transition-delay:.28s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .hero-photo-col{display:none}
+  .hero-content h1{font-size:clamp(34px,7vw,62px)}
+  .who-grid{grid-template-columns:1fr;gap:48px}
+  .svc-grid{grid-template-columns:1fr 1fr}
+  .adv-grid{grid-template-columns:1fr 1fr}
+  .proc-layout{grid-template-columns:1fr;gap:48px}
+  .ft-row{flex-direction:column;gap:28px}
+  .ft-bot{flex-direction:column;text-align:center}
+  .gc{flex:0 0 270px;height:215px}
+  .gc.w{flex:0 0 370px}
+  .rc{flex:0 0 272px}
+}
+@media(max-width:600px){
+  .nav-ul li:not(:last-child){display:none}
+  .hero{height:160vh}
+  .hero-sticky{height:100vh;padding-top:64px}
+  .hero-content{padding:0 5%}
+  .hero-content .hero-eyebrow{font-size:11px;padding:5px 12px;margin-bottom:18px}
+  .hero-content h1{font-size:clamp(30px,9vw,46px);letter-spacing:-.5px;margin-bottom:16px}
+  .hero-content .hero-sub{font-size:14.5px;line-height:1.7;margin-bottom:26px}
+  .hero-content .btns{flex-direction:column;align-items:center;gap:10px}
+  .hero-content .btn{width:100%;max-width:300px;text-align:center;padding:13px 20px;justify-content:center}
+  .hero-content .trust{gap:8px 14px;margin-top:24px}
+  .hero-content .tc{font-size:12px}
+  .svc-grid{grid-template-columns:1fr}
+  .adv-grid{grid-template-columns:1fr 1fr}
+  .who-stats{grid-template-columns:1fr 1fr}
+  .sec{padding:72px 5%}
+  .gtrack{padding:4px 5% 22px}
+  .garr-row{padding:0 5%}
+  .gfooter{padding:0 5%}
+}
+@media(max-width:400px){
+  .hero-content .hero-eyebrow{font-size:10px;padding:4px 10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .r{opacity:1;transform:none;transition:none}
+  .lf{display:none}
+}
+
+/* ── NAV CALL BUTTON (mobile only) ── */
+.nav-call-btn{
+  display:none;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:50%;
+  background:var(--g);color:#fff;text-decoration:none;
+  transition:background .18s,transform .15s;
+  box-shadow:0 2px 8px rgba(58,110,72,.25);
+  flex-shrink:0;
+}
+.nav-call-btn:hover{background:var(--gdk);transform:scale(1.08)}
+@media(max-width:1024px){
+  .nav-call-btn{display:flex}
+}
+
+/* ── CTA STRIP (after sections) ── */
+.cta-strip{
+  background:var(--glt);border-top:1px solid var(--gmid);border-bottom:1px solid var(--gmid);
+  padding:40px 7%;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+}
+.cta-strip-text p{font-size:19px;font-weight:600;color:var(--tx);margin-bottom:4px;font-family:Arial,sans-serif}
+.cta-strip-text span{font-size:14px;color:var(--soft);font-weight:300}
+@media(max-width:600px){
+  .cta-strip{flex-direction:column;align-items:stretch;text-align:center}
+  .cta-strip .btn{text-align:center}
+}
+
+/* ── MID PAGE FORM ── */
+.mid-form-sec{
+  background:var(--gdk);
+  padding:80px 7%;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.mid-form-sec::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%,rgba(82,168,112,.25) 0%,transparent 60%);
+  pointer-events:none;
+}
+.mid-form-sec h2{color:#fff;margin-bottom:10px}
+.mid-form-sec .lead{color:rgba(255,255,255,.82);margin:0 auto 36px;max-width:460px}
+.mid-form-box{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  max-width:600px;margin:0 auto;
+}
+.mid-form-box .finput{
+  flex:1 1 180px;background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.25);color:#fff;
+}
+.mid-form-box .finput::placeholder{color:rgba(255,255,255,.55)}
+.mid-form-box .finput:focus{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(255,255,255,.1)}
+.mid-form-box .btn{
+  background:#fff;color:var(--gdk);font-weight:700;
+  padding:14px 32px;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);
+}
+.mid-form-box .btn:hover{background:var(--glt);transform:translateY(-2px)}
+.mid-fnote{font-size:12px;color:rgba(255,255,255,.5);margin-top:14px}
+@media(max-width:600px){
+  .mid-form-box{flex-direction:column}
+  .mid-form-box .finput,.mid-form-box .btn{width:100%;flex:none}
+}
+</style>
+</head>
+<body>
+
+<div id="lc" aria-hidden="true"></div>
+
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <a href="#" class="logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <ellipse cx="12" cy="12" rx="10.5" ry="11.5" fill="var(--g)" opacity=".92"/>
+      <line x1="12" y1="1" x2="12" y2="23" stroke="white" stroke-width="1.1" opacity=".55"/>
+      <line x1="12" y1="8.5" x2="6" y2="6" stroke="white" stroke-width=".9" opacity=".42"/>
+      <line x1="12" y1="8.5" x2="18" y2="6" stroke="white" stroke-width=".9" opacity=".42"/>
+      <line x1="12" y1="14" x2="5.5" y2="11.5" stroke="white" stroke-width=".85" opacity=".36"/>
+      <line x1="12" y1="14" x2="18.5" y2="11.5" stroke="white" stroke-width=".85" opacity=".36"/>
+    </svg>
+    טרבלסי גינון
+  </a>
+  <ul class="nav-ul">
+    <li><a href="#who">מי אנחנו</a></li>
+    <li><a href="#services">שירותים</a></li>
+    <li><a href="#gallery">עבודות</a></li>
+    <li><a href="#reviews">המלצות</a></li>
+    <li><a href="#contact" class="nb">להצעת מחיר</a></li>
+  </ul>
+  <a href="tel:0505713594" class="nav-call-btn" aria-label="חייגו אלינו">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.13 6.13l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  </a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-sticky">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow r"><div class="edot"></div>מעל 15 שנה · מאות גינות ברחבי הארץ</div>
+      <h1 class="r d1">הגינה שתמיד<em>חלמתם עליה</em></h1>
+      <p class="hero-sub r d2">מהקמה מלאה ועד תחזוקה שוטפת — מטפלים בכל מה שהגינה שלכם צריכה. מגיעים בזמן, עובדים ביסודיות, ומשאירים גינה שגאים להראות.</p>
+      <div class="btns r d3">
+        <a href="#contact" class="btn">קבלו הצעת מחיר חינם</a>
+        <a href="tel:0505713594" class="btn" style="display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.13 6.13l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>חייגו אלינו</a>
+      </div>
+      <div class="trust r d4">
+        <div class="tc"><div class="tck"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>מגיעים בזמן תמיד</div>
+        <div class="tc"><div class="tck"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>הצעת מחיר שקופה</div>
+        <div class="tc"><div class="tck"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>אחריות על כל עבודה</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHO WE ARE ── -->
+<section class="sec alt" id="who">
+  <span class="stag r">מי אנחנו</span>
+  <h2 class="r d1">טרבלסי גינון —<br><span>כשהטבע פוגש מקצועיות</span></h2>
+  <div class="who-grid">
+    <div class="who-copy">
+      <p class="r"><strong>כבר למעלה מ-15 שנה,</strong> טרבלסי גינון מוביל בתחום הגינון המקצועי. אנחנו מאמינים שכל שטח ירוק הוא הזדמנות ליצור משהו מיוחד — מקום שמעורר השראה, שמחבר בין אדם לטבע.</p>
+      <p class="r d1">הצוות שלנו כולל גננים מוסמכים, מעצבי נוף ומהנדסי השקיה מנוסים. אנחנו מלווים כל פרויקט מהרעיון הראשוני ועד לתוצאה הסופית — עם תשומת לב לכל פרט.</p>
+      <div class="who-stats r d2">
+        <div class="wstat"><div class="wstat-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div class="wstat-n" data-target="15">0</div><div class="wstat-l">שנות ניסיון</div></div>
+        <div class="wstat"><div class="wstat-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="wstat-n" data-target="500">0</div><div class="wstat-l">לקוחות מרוצים</div></div>
+        <div class="wstat"><div class="wstat-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="wstat-n" data-target="100">0</div><div class="wstat-l">% מחויבות</div></div>
+        <div class="wstat"><div class="wstat-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 7 7.5 4 2 4c0 5.5 3 10 10 10zM12 12c0-5 4.5-8 10-8-1 5.5-5 10-10 10"/></svg></div><div class="wstat-n" data-target="1000">0</div><div class="wstat-l">פרויקטים</div></div>
+      </div>
+    </div>
+    <div class="who-photo r d1"><img src="images/garden7.jpeg" alt="טרבלסי גינון"></div>
+  </div>
+</section>
+
+<!-- ── CTA STRIP after WHO ── -->
+<div class="cta-strip">
+  <div class="cta-strip-text">
+    <p>רוצים לשמוע עוד על השירות שלנו?</p>
+    <span>נחזור אליכם בהקדם · ללא התחייבות</span>
+  </div>
+  <a href="#contact" class="btn">קבלו הצעת מחיר חינם</a>
+</div>
+
+<!-- ── SERVICES ── -->
+<section class="sec" id="services">
+  <span class="stag r">השירותים שלנו</span>
+  <h2 class="r d1">כל מה שהגינה שלכם צריכה</h2>
+  <p class="lead r d2">שירות מלא תחת קורת גג אחת — עם אנשים שאפשר לסמוך עליהם.</p>
+  <div class="svc-grid">
+    <div class="svc r"><div class="svc-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="svc-nm">הקמת גינות</div><p class="svc-bd">מגינה ריקה לגינה שמתאהבים בה — תכנון מותאם לחלל, לאקלים ולאדמה. מלווים אתכם מהתוכנית הראשונה עד הנגיעה האחרונה: צמחייה, שבילים, פרגולות, גדרות ותאורה.</p><span class="svc-nt">→ פרויקטים מלאים מ-A עד Z</span></div>
+    <div class="svc r d1"><div class="svc-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M7 20V8m5 12V4m5 16v-6"/></svg></div><div class="svc-nm">שתילת דשא חי</div><p class="svc-bd">הכנת קרקע מקצועית — פירוק, תוספת אדמה, ייצוב ופילוס. בוחרים את זן הדשא שמתאים לאקלים ולשימוש, עם ליווי צמוד עד שהדשא מושרש לגמרי ומוכן לדריכה.</p><span class="svc-nt">→ ברמודה, זויסיה, גינה אנגלית</span></div>
+    <div class="svc r d2"><div class="svc-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 19.81M17 8l-3-5M17 8l4-1M3.82 19.81A10 10 0 0 1 3 14c0-4.4 3.6-8 8-8"/></svg></div><div class="svc-nm">גיזום וכריתת עצים</div><p class="svc-bd">סנפלינג מקצועי לגיזום ועיצוב עצים גבוהים בצורה בטיחותית לחלוטין. מגיעים עם כל הציוד, מבצעים בדייקנות ומפנים את כל החומרים — משאירים מקום נקי ומסודר.</p><span class="svc-nt">→ כולל פינוי כל חומרי הגיזום</span></div>
+    <div class="svc r"><div class="svc-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="svc-nm">השקיה ממוחשבת</div><p class="svc-bd">מערכות חכמות עם תזמון אוטומטי, חיישני לחות ושליטה מהנייד — 24/7. הגינה מקבלת בדיוק את מה שהיא צריכה: פחות מים בחשבון, יותר ירוק בחוץ.</p><span class="svc-nt">→ השירות הכי מבוקש שלנו</span></div>
+    <div class="svc r d1"><div class="svc-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="svc-nm">ייעוץ וליווי גינון</div><p class="svc-bd">כל גינה היא עולם בפני עצמה. אם אינכם בטוחים מה הגינה שלכם צריכה — נגיע, נסתכל ונבנה יחד תוכנית שמתאימה לכם בדיוק, בלי התחייבות.</p><span class="svc-nt">→ פגישת ייעוץ ראשונה ללא עלות</span></div>
+    <div class="svc r d2"><div class="svc-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 7 7.5 4 2 4c0 5.5 3 10 10 10zM12 12c0-5 4.5-8 10-8-1 5.5-5 10-10 10"/></svg></div><div class="svc-nm">תחזוקה שוטפת</div><p class="svc-bd">ביקורים קבועים לפי עונות השנה — גיזום, דישון, עידור ועשבייה. מטפלים בכל הפרטים הקטנים שהופכים גינה טובה למושלמת. הגינה תמיד מטופחת ומוכנה, בלי שתצטרכו לחשוב על זה.</p><span class="svc-nt">→ ביקורים חודשיים / דו-שבועיים</span></div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="sec alt" id="gallery" style="padding-bottom:56px">
+  <span class="stag r">הגינות שלנו</span>
+  <h2 class="r d1">עבודות שמדברות בעד עצמן</h2>
+  <p class="lead r d2">גלגלו ימינה לראות עוד פרויקטים.</p>
+  <div class="gtrack r d2" id="gtr">
+    <div class="gc w"><img src="images/garden1.jpeg" alt="גינת כניסה + דשא חי"></div>
+    <div class="gc"><img src="images/garden2.jpeg" alt="גינה פרטית + פרגולה"></div>
+    <div class="gc"><img src="images/garden3.jpeg" alt="חצר אחורית"></div>
+    <div class="gc w"><img src="images/garden4.jpeg" alt="גינת גג עם השקיה"></div>
+    <div class="gc"><img src="images/garden5.jpeg" alt="שדרת כניסה לבניין"></div>
+    <div class="gc"><img src="images/garden6.jpeg" alt="גינת ילדים + דשא"></div>
+  </div>
+  <div class="garr-row"><button class="garr" onclick="sc('gtr',-1)" aria-label="קודם"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mid)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button><button class="garr" onclick="sc('gtr',1)" aria-label="הבא"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mid)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button></div>
+  <div class="gfooter r"><p>רוצים לראות עוד? <strong>יש לנו עשרות פרויקטים נוספים.</strong></p></div>
+</section>
+
+<!-- ── MID PAGE FORM ── -->
+<section class="mid-form-sec">
+  <h2 class="r" style="font-family:Arial,sans-serif;letter-spacing:-1px">מוכנים לגינה שתמיד חלמתם עליה?</h2>
+  <p class="lead r d1">השאירו שם ומספר — נחזור אליכם בהקדם ונתאם ביקור חינם</p>
+  <div class="mid-form-box r d2">
+    <input class="finput" type="text" placeholder="שם מלא" id="mfn" dir="rtl">
+    <input class="finput" type="tel" placeholder="מספר טלפון" id="mfp" dir="rtl">
+    <button class="btn" onclick="subMid()">קבלו הצעת מחיר</button>
+  </div>
+  <p class="mid-fnote">ייעוץ ראשון ללא עלות · אין התחייבות · מגיבים בהקדם</p>
+  <div class="mid-form-call"><a href="tel:0505713594"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.13 6.13l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>חייגו אלינו</a></div>
+</section>
+
+<!-- ── ADVANTAGES ── -->
+<section class="sec" id="adv">
+  <span class="stag r">היתרונות שלנו</span>
+  <h2 class="r d1">למה בוחרים בנו</h2>
+  <div class="adv-grid">
+    <div class="adv r"><div class="adv-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="adv-ttl">אמינות</div><p class="adv-txt">מגיעים בזמן, עובדים ביסודיות, מסיימים כמו שהתחייבנו. אין הפתעות ואין תירוצים.</p></div>
+    <div class="adv r d1"><div class="adv-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div class="adv-ttl">מקצועיות</div><p class="adv-txt">גננים מוסמכים עם ניסיון שטחי עשיר. יודעים מה הגינה שלכם צריכה ואיך לתת לה את זה.</p></div>
+    <div class="adv r d2"><div class="adv-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="adv-ttl">שירות אישי</div><p class="adv-txt">כל לקוח מקבל יחס מותאם. מכירים אתכם, מכירים את הגינה שלכם, ושומרים על קשר לאורך זמן.</p></div>
+    <div class="adv r d3"><div class="adv-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="adv-ttl">פתרונות מותאמים</div><p class="adv-txt">כל גינה שונה — אדמה, אקלים, סגנון, תקציב. מתאימים את הפתרון לצרכים האמיתיים שלכם.</p></div>
+  </div>
+</section>
+
+<!-- ── REVIEWS ── -->
+<section class="sec alt" id="reviews" style="padding-bottom:56px">
+  <span class="stag r">מה אומרים עלינו</span>
+  <h2 class="r d1">הלקוחות שלנו מספרים</h2>
+  <div class="rtrack r d2" id="rtr">
+    <div class="rc"><div class="rc-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><p class="rc-txt">"הגינה שלנו הייתה מוזנחת שנים. טרבלסי הפכו אותה למקום שכל המשפחה אוהבת לשבת בו. עבדו מהר, נקו הכל, ובמחיר שלא ציפינו."</p><div class="rc-author"><div class="rav">ש·מ</div><div class="rav-n"><strong>שלי ומשה כהן</strong><span>רעננה · לקוחות 4 שנים</span></div></div></div>
+    <div class="rc"><div class="rc-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><p class="rc-txt">"התקינו לנו מערכת השקיה ממוחשבת ומאז לא נגעתי בצינור. הדשא ירוק יותר מאי פעם והחשבון ירד משמעותית."</p><div class="rc-author"><div class="rav">ד·ל</div><div class="rav-n"><strong>דרור לוי</strong><span>כפר סבא · לקוח 2 שנים</span></div></div></div>
+    <div class="rc"><div class="rc-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><p class="rc-txt">"הגינה החדשה יצאה מעבר לציפיות. ידעו לייעץ, הציעו פתרונות שלא חשבנו עליהם, ועמדו בלוח הזמנים במדויק."</p><div class="rc-author"><div class="rav">י·ג</div><div class="rav-n"><strong>יעל ואלון גולן</strong><span>הרצליה · פרויקט הקמה</span></div></div></div>
+    <div class="rc"><div class="rc-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><p class="rc-txt">"מגיעים כל חודש, תמיד מדויקים, מסבירים מה עשו. הגינה הפכה לחלק מהבית שאנחנו אוהבים. ממליצים לכולם."</p><div class="rc-author"><div class="rav">מ·ר</div><div class="rav-n"><strong>מיכל ורון אברהם</strong><span>ראשון לציון · תחזוקה שוטפת</span></div></div></div>
+    <div class="rc"><div class="rc-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><p class="rc-txt">"כרתו לנו עץ גדול שהיה מסוכן ליד הבית. עבדו ביסודיות, בצורה בטיחותית לחלוטין, וניקו כאילו לא היו כאן."</p><div class="rc-author"><div class="rav">ס·ב</div><div class="rav-n"><strong>שמעון בן-דוד</strong><span>פתח תקווה · כריתת עצים</span></div></div></div>
+    <div class="rc"><div class="rc-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><p class="rc-txt">"שתלו לנו דשא חי כשחשבנו שזה לא אפשרי בגלל הצל. ידעו בדיוק איזה זן לבחור. תוצאה מושלמת לגמרי."</p><div class="rc-author"><div class="rav">נ·ש</div><div class="rav-n"><strong>נועה שמיר</strong><span>נס ציונה · דשא חי</span></div></div></div>
+  </div>
+  <div class="garr-row"><button class="garr" onclick="sc('rtr',-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mid)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button><button class="garr" onclick="sc('rtr',1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mid)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button></div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section class="sec" id="process">
+  <span class="stag r">איך זה עובד</span>
+  <h2 class="r d1">ארבעה שלבים ואתם בגינה</h2>
+  <div class="proc-layout">
+    <div class="proc-steps">
+      <div class="ps r"><div class="pn">1</div><div><div class="ps-h">שיחת היכרות</div><p class="ps-p">מדברים 10 דקות בלי התחייבות — מבינים מה יש לכם, מה אתם חולמים, ומה התקציב. מכאן מתחיל הכל.</p></div></div>
+      <div class="ps r d1"><div class="pn">2</div><div><div class="ps-h">ביקור בשטח</div><p class="ps-p">מגיעים אליכם, רואים בעיניים, בודקים אדמה ותנאים. רק אחרי שמבינים לעומק — מציעים פתרון אמיתי.</p></div></div>
+      <div class="ps r d2"><div class="pn">3</div><div><div class="ps-h">הצעת מחיר שקופה</div><p class="ps-p">פירוט מלא פריט אחרי פריט. יודעים בדיוק מה מקבלים ומה משלמים — ורק אחרי הסכמה, מתחילים.</p></div></div>
+      <div class="ps r d3"><div class="pn">4</div><div><div class="ps-h">ביצוע וסיום מושלם</div><p class="ps-p">עובדים ביסודיות, מסיימים בזמן. בסיום — גינה מוכנה, ניקיון מלא, ואתם פשוט נהנים.</p></div></div>
+    </div>
+    <div class="r d1" id="contact">
+      <div class="contact-box">
+        <h3>מוכנים להתחיל?</h3>
+        <p class="lead">השאירו שם ומספר — נחזור אליכם בהקדם. ללא התחייבות.</p>
+        <div class="form-row">
+          <input class="finput" type="text" placeholder="שם מלא" id="fn" dir="rtl">
+          <input class="finput" type="tel" placeholder="מספר טלפון" id="fp" dir="rtl">
+          <button class="fsub" id="fsb" onclick="sub()">שלחו לנו — נחזור אליכם בהקדם</button>
+        </div>
+        <p class="fnote">מגיבים בהקדם · ללא התחייבות · ייעוץ ראשון חינם</p>
+        <div class="form-call"><a href="tel:0505713594"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.13 6.13l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>חייגו אלינו</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="ft-row">
+    <div><div class="ft-logo">טרבלסי גינון</div><p class="ft-tag">גינות שמדברות בעד עצמן. מעל עשור של עבודה מקצועית ואמינה.</p></div>
+    <div><p class="fc-h">שירותים</p><ul class="fc-ul"><li><a href="#services">תחזוקה שוטפת</a></li><li><a href="#services">הקמת גינות</a></li><li><a href="#services">השקיה ממוחשבת</a></li><li><a href="#services">שתילת דשא חי</a></li><li><a href="#services">גיזום וכריתה</a></li></ul></div>
+    <div><p class="fc-h">ניווט</p><ul class="fc-ul"><li><a href="#who">מי אנחנו</a></li><li><a href="#gallery">עבודות</a></li><li><a href="#reviews">המלצות</a></li><li><a href="#contact">צרו קשר</a></li></ul></div>
+  </div>
+  <div class="ft-div"></div>
+  <div class="ft-bot"><span>© 2025 טרבלסי גינון · כל הזכויות שמורות · <a href="privacy.html" style="color:rgba(255,255,255,.38);text-decoration:none;transition:color .18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.38)'">מדיניות פרטיות</a></span><div class="ft-contact"><a href="tel:050-5713594">050-571-3594</a><a href="mailto:info@trablesi.co.il">info@trablesi.co.il</a></div></div>
+</footer>
+
+<script>
+const LEAF = "data:image/png;base64,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";
+
+/* NAV */
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('on',scrollY>12)},{passive:true});
+
+/* REVEAL */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -24px 0px'});
+document.querySelectorAll('.r').forEach(el=>ro.observe(el));
+
+/* COUNTERS */
+function cnt(el,tg){
+  const d=1600,s=performance.now(),sx=tg===100?'%':'+';
+  (function t(n){const p=Math.min((n-s)/d,1),v=Math.round((1-Math.pow(1-p,3))*tg);el.textContent=v+(p>=1?sx:'');if(p<1)requestAnimationFrame(t);})(s);
+}
+const co=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const el=e.target.querySelector('[data-target]');if(el)cnt(el,+el.dataset.target);co.unobserve(e.target)}})},{threshold:.4});
+document.querySelectorAll('.wstat').forEach(el=>co.observe(el));
+
+/* SCROLL TRACKS */
+function sc(id,d){const el=document.getElementById(id);el.scrollBy({left:d*el.clientWidth*.72,behavior:'smooth'})}
+document.querySelectorAll('.gtrack,.rtrack').forEach(tr=>{
+  let dn=false,sx,sl;
+  tr.addEventListener('mousedown',e=>{dn=true;tr.classList.add('gb');sx=e.pageX-tr.offsetLeft;sl=tr.scrollLeft});
+  tr.addEventListener('mouseleave',()=>{dn=false;tr.classList.remove('gb')});
+  tr.addEventListener('mouseup',()=>{dn=false;tr.classList.remove('gb')});
+  tr.addEventListener('mousemove',e=>{if(!dn)return;e.preventDefault();tr.scrollLeft=sl-(e.pageX-tr.offsetLeft-sx)*1.2});
+});
+
+/* LEAVES — sides only, 4 per side */
+(function(){
+  const canvas=document.getElementById('lc');
+  const sides=['left','right'];
+  const all=[];
+  sides.forEach((side,si)=>{
+    for(let i=0;i<4;i++){
+      const div=document.createElement('div');
+      div.className='lf';
+      const img=document.createElement('img');
+      const sz=28+Math.random()*38;
+      img.src=LEAF;
+      img.width=Math.round(sz);
+      img.height=Math.round(sz*0.66);
+      div.appendChild(img);
+      canvas.appendChild(div);
+      // x zone: left = 0-8vw, right = 92-100vw
+      const xBase = side==='left' ? Math.random()*8 : 92+Math.random()*8;
+      all.push({
+        el:div,
+        side,
+        x:xBase,y:-12-Math.random()*20,
+        vy:.12+Math.random()*.18,
+        vx:(Math.random()-.5)*.06,
+        rot:Math.random()*360,
+        vr:(Math.random()-.5)*.45,
+        opacity:0,
+        phase:Math.random()*Math.PI*2,
+        delay:(si*4+i)*2400+Math.random()*1200,
+        xBase
+      });
+    }
+  });
+
+  let ly=0,vel=0,t=0;
+  window.addEventListener('scroll',()=>{vel=Math.min(Math.abs(scrollY-ly)*.014,.4);ly=scrollY},{passive:true});
+
+  function tick(){
+    t++;
+    const now=performance.now();
+    all.forEach(l=>{
+      if(l.opacity===0&&now<l.delay)return;
+      if(now>=l.delay&&l.opacity<.01){l.x=l.xBase;l.y=-12}
+      l.y+=l.vy+vel*.3;
+      l.x+=l.vx+Math.sin(t*.009+l.phase)*.025;
+      l.rot+=l.vr;
+      if(l.y<10)l.opacity=Math.min(l.opacity+.03,.55);
+      if(l.y>85)l.opacity=Math.max(l.opacity-.022,0);
+      if(l.y>110){l.y=-12;l.x=l.xBase;l.opacity=0;l.delay=now+Math.random()*600}
+      l.el.style.cssText=`left:${l.x}vw;top:${l.y}vh;opacity:${l.opacity};transform:rotate(${l.rot}deg)`;
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* MID FORM */
+function subMid(){
+  const n=document.getElementById('mfn').value.trim();
+  const p=document.getElementById('mfp').value.trim();
+  const btn=event.target;
+  if(n.length>1&&p.length>5){
+    btn.textContent='✓ קיבלנו! נחזור בקרוב';
+    btn.style.background='var(--glt)';
+    btn.disabled=true;
+    document.getElementById('mfn').disabled=true;
+    document.getElementById('mfp').disabled=true;
+  }else{
+    const bad=n.length<2?'mfn':'mfp';
+    document.getElementById(bad).style.borderColor='rgba(255,120,120,.7)';
+    document.getElementById(bad).focus();
+    setTimeout(()=>{document.getElementById('mfn').style.borderColor='';document.getElementById('mfp').style.borderColor=''},2000);
+  }
+}
+
+/* FORM */
+function sub(){
+  const n=document.getElementById('fn').value.trim();
+  const p=document.getElementById('fp').value.trim();
+  const b=document.getElementById('fsb');
+  if(n.length>1&&p.length>5){
+    b.textContent='✓ קיבלנו! נחזור אליכם בקרוב';
+    b.style.background='var(--gdk)';
+    b.disabled=true;
+    document.getElementById('fn').disabled=true;
+    document.getElementById('fp').disabled=true;
+  }else{
+    const bad=n.length<2?'fn':'fp';
+    document.getElementById(bad).style.borderColor='#e05555';
+    document.getElementById(bad).focus();
+    setTimeout(()=>{document.getElementById('fn').style.borderColor='';document.getElementById('fp').style.borderColor=''},2000);
+  }
+}
+
+/* SCROLLING HERO FRAMES */
+(function(){
+  const START=23,TOTAL=39;
+  const canvas=document.getElementById('hero-canvas');
+  const ctx=canvas.getContext('2d');
+  const hero=document.getElementById('hero');
+  const heroSticky=document.querySelector('.hero-sticky');
+  let curFrame=0;
+
+  function resize(){
+    canvas.width=canvas.offsetWidth||window.innerWidth;
+    canvas.height=canvas.offsetHeight||window.innerHeight;
+    draw(curFrame);
+  }
+
+  function draw(i){
+    const img=imgs[i];
+    if(!img||!img.complete||!img.naturalWidth)return;
+    const cw=canvas.width,ch=canvas.height;
+    const scale=Math.max(cw/img.naturalWidth,ch/img.naturalHeight);
+    const sw=img.naturalWidth*scale,sh=img.naturalHeight*scale;
+    ctx.drawImage(img,(cw-sw)/2,(ch-sh)/2,sw,sh);
+  }
+
+  function onScroll(){
+    const scrollable=hero.offsetHeight-heroSticky.offsetHeight;
+    if(scrollable<=0)return;
+    const progress=Math.max(0,Math.min(1,(window.scrollY-hero.offsetTop)/scrollable));
+    const f=Math.min(Math.round(progress*(TOTAL-1)),TOTAL-1);
+    if(f!==curFrame){curFrame=f;draw(f);}
+  }
+
+  const imgs=[];
+  for(let i=0;i<TOTAL;i++){
+    const img=new Image();
+    const n=String(i+START).padStart(3,'0');
+    img.src='scrolling_frames/frame_'+n+'.webp';
+    img.onload=()=>{if(i===0)draw(0);};
+    imgs.push(img);
+  }
+
+  resize();
+  window.addEventListener('resize',resize,{passive:true});
+  window.addEventListener('scroll',onScroll,{passive:true});
+})();
+
+/* ANCHORS */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}});
+});
+</script>
+</body>
+</html>

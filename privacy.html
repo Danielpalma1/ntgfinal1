@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מדיניות פרטיות – טרבלסי גינון</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#52a870;--g2:#6abf88;--glt:#edf8f1;--gmid:#c0e4d0;--gdk:#347a50;
+  --tx:#18211a;--mid:#4a5c50;--soft:#8a9d90;--bdr:#deeae3;--bg:#ffffff;--bgs:#f4faf6;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--tx);direction:rtl;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:60;
+  height:64px;padding:0 7%;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(16px);
+  box-shadow:0 1px 0 var(--bdr);
+}
+.logo{
+  display:flex;align-items:center;gap:9px;
+  font-family:Arial,sans-serif;font-size:18px;font-weight:700;
+  color:var(--gdk);text-decoration:none;letter-spacing:-.3px;
+}
+.back-link{
+  font-size:14px;color:var(--mid);text-decoration:none;
+  display:flex;align-items:center;gap:5px;
+  transition:color .18s;
+}
+.back-link:hover{color:var(--g)}
+
+/* HERO */
+.page-hero{
+  background:var(--glt);border-bottom:1px solid var(--gmid);
+  padding:56px 7% 48px;
+}
+.page-hero .stag{
+  display:block;font-size:10.5px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--g);margin-bottom:12px;
+}
+.page-hero h1{
+  font-family:Arial,sans-serif;
+  font-size:clamp(28px,4vw,42px);
+  line-height:1.1;color:var(--tx);
+  font-weight:700;letter-spacing:-1px;margin-bottom:10px;
+}
+.page-hero .sub{font-size:15px;color:var(--soft);font-weight:300}
+
+/* CONTENT */
+.content{max-width:760px;margin:0 auto;padding:64px 7%}
+
+.content h2{
+  font-family:Arial,sans-serif;
+  font-size:20px;font-weight:700;color:var(--tx);
+  margin:40px 0 14px;letter-spacing:-.2px;
+  padding-right:14px;border-right:3px solid var(--g);
+}
+.content h2:first-child{margin-top:0}
+
+.content p{
+  font-size:15px;line-height:1.85;color:var(--mid);
+  font-weight:300;margin-bottom:14px;
+}
+
+.content ul{
+  margin:0 20px 16px 0;
+  display:flex;flex-direction:column;gap:8px;
+}
+.content ul li{
+  font-size:15px;line-height:1.75;color:var(--mid);
+  font-weight:300;position:relative;
+  padding-right:18px;
+}
+.content ul li::before{
+  content:'•';
+  color:var(--g);font-weight:700;
+  position:absolute;right:0;top:0;
+}
+
+.content .highlight-box{
+  background:var(--glt);border:1px solid var(--gmid);border-radius:14px;
+  padding:24px 22px;margin:28px 0;
+}
+.content .highlight-box p{margin:0}
+
+/* CONTACT CARD */
+.contact-card{
+  background:var(--tx);border-radius:16px;
+  padding:28px 26px;margin-top:48px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+}
+.contact-card p{color:rgba(255,255,255,.75);font-size:14px;font-weight:300;margin:0}
+.contact-card strong{display:block;color:#fff;font-size:16px;font-weight:600;margin-bottom:4px}
+.contact-card a{
+  background:var(--g);color:#fff;
+  padding:12px 26px;border-radius:10px;
+  font-size:15px;font-weight:600;font-family:'Heebo',sans-serif;
+  text-decoration:none;white-space:nowrap;
+  transition:background .18s,transform .15s;
+  box-shadow:0 2px 10px rgba(58,110,72,.3);
+}
+.contact-card a:hover{background:var(--gdk);transform:translateY(-1px)}
+
+/* FOOTER */
+footer{
+  background:#0f1811;padding:32px 7%;
+  text-align:center;color:rgba(255,255,255,.35);font-size:13px;font-weight:300;
+}
+footer a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .18s}
+footer a:hover{color:#fff}
+
+@media(max-width:600px){
+  .content{padding:48px 5%}
+  .page-hero{padding:40px 5% 36px}
+  .contact-card{flex-direction:column;align-items:flex-start}
+  .contact-card a{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="trablesi-v7_3.html" class="logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <ellipse cx="12" cy="12" rx="10.5" ry="11.5" fill="var(--g)" opacity=".92"/>
+      <line x1="12" y1="1" x2="12" y2="23" stroke="white" stroke-width="1.1" opacity=".55"/>
+      <line x1="12" y1="8.5" x2="6" y2="6" stroke="white" stroke-width=".9" opacity=".42"/>
+      <line x1="12" y1="8.5" x2="18" y2="6" stroke="white" stroke-width=".9" opacity=".42"/>
+    </svg>
+    טרבלסי גינון
+  </a>
+  <a href="trablesi-v7_3.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    חזרה לאתר
+  </a>
+</nav>
+
+<div class="page-hero">
+  <span class="stag">משפטי</span>
+  <h1>מדיניות פרטיות</h1>
+  <p class="sub">עדכון אחרון: ינואר 2025</p>
+</div>
+
+<div class="content">
+
+  <p>האתר מופעל על ידי <strong>טרבלסי גינון</strong>.<br>
+  אנו מכבדים את פרטיות המשתמשים באתר ופועלים בהתאם להוראות חוק הגנת הפרטיות, לרבות תיקון 13 לחוק.</p>
+
+  <h2>איזה מידע נאסף באתר</h2>
+  <p>בעת השימוש באתר ו/או השארת פרטים בטופס יצירת הקשר, ייתכן שייאסף מידע כגון:</p>
+  <ul>
+    <li>שם מלא</li>
+    <li>מספר טלפון</li>
+    <li>כתובת דוא״ל (אם נמסרה)</li>
+    <li>תוכן הפנייה</li>
+    <li>מידע טכני וסטטיסטי על השימוש באתר</li>
+  </ul>
+  <div class="highlight-box">
+    <p>המידע נמסר מרצון המשתמש בלבד.</p>
+  </div>
+
+  <h2>מטרות השימוש במידע</h2>
+  <p>המידע ישמש לצורך:</p>
+  <ul>
+    <li>יצירת קשר עם הפונה</li>
+    <li>מתן הצעות מחיר</li>
+    <li>תיאום שירותי גינון</li>
+    <li>מתן שירות ותמיכה</li>
+    <li>שיפור השירות וחוויית המשתמש באתר</li>
+  </ul>
+
+  <h2>שימוש בכלי מדידה ופרסום</h2>
+  <p>ייתכן שהאתר עושה שימוש בכלים כגון:</p>
+  <ul>
+    <li>Google Analytics</li>
+    <li>Facebook / Meta Pixel</li>
+  </ul>
+  <p>כלים אלו אוספים מידע סטטיסטי וטכני לצורך ניתוח פעילות באתר ושיפור הפרסום והשירות.</p>
+
+  <h2>מסירת מידע לצדדים שלישיים</h2>
+  <p>המידע לא יימכר ולא יועבר לצדדים שלישיים, אלא במקרים הבאים:</p>
+  <ul>
+    <li>אם יידרש על פי דין</li>
+    <li>לצורך תפעול האתר והשירותים הניתנים באמצעותו</li>
+    <li>לצורך הגנה על זכויות העסק</li>
+  </ul>
+
+  <h2>אבטחת מידע</h2>
+  <p>העסק נוקט באמצעים סבירים ומקובלים לשמירה על אבטחת המידע ומניעת גישה בלתי מורשית.</p>
+
+  <h2>יצירת קשר בנושא פרטיות</h2>
+  <p>לכל שאלה בנושא פרטיות ושימוש במידע ניתן ליצור קשר:</p>
+
+  <div class="contact-card">
+    <div>
+      <strong>טרבלסי גינון</strong>
+      <p>זמינים לכל שאלה בנושא פרטיות ושימוש במידע</p>
+    </div>
+    <a href="tel:050-5713594">050-571-3594</a>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2025 טרבלסי גינון · כל הזכויות שמורות · <a href="trablesi-v7_3.html">חזרה לאתר הראשי</a></span>
+</footer>
+
+</body>
+</html>
